@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <TaskList />
+    <Tasks />
   </div>
 </template>
 
 <script>
-import TaskList from './components/TaskList.vue'
+import Tasks from './components/Tasks.vue'
 
 export default {
   name: 'App',
   components: {
-    TaskList
+    Tasks
   }
 }
 </script>
