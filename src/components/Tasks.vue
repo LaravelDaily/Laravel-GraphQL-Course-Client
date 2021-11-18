@@ -68,7 +68,9 @@ export default {
         this.title = ''
         this.open_form = false
         this.$apollo.queries.tasks.refetch()
-      })
+      }).catch((error) => {
+        console.log(error);
+      });
     },
     delete_task(id) {
       this.$apollo.mutate({
