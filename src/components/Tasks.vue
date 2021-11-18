@@ -12,6 +12,22 @@
         <button @click="delete_task(task.id)">Delete</button>
       </li>
     </ul>
+
+    <div>
+      <div>Page: {{ paginator.currentPage }} / {{ paginator.lastPage }}</div>
+      <div>
+        Displaying {{ paginator.count }} entries out of {{ paginator.total }}
+      </div>
+      <div>
+        <button @click="page--">
+          &larr; Previous
+        </button>
+        <button @click="page++">
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+
     <button @click="open_form = true">Add a task</button>
 
     <div v-show="open_form">
@@ -35,7 +51,10 @@ export default {
       title_edit: '',
       id_edit: null,
       open_form: false,
-      open_edit_form: false
+      open_edit_form: false,
+      page: 1,
+      perPage: 10,
+      paginator: null
     };
   },
   methods: {
@@ -82,7 +101,20 @@ export default {
     },
   },
   apollo: {
-    tasks: TASKS_QUERY,
+    tasks: {
+      query: TASKS_QUERY,
+      variables() {
+        return {
+          perPage: this.perPage,
+          page: this.page
+        }
+      },
+      update: function(data) {
+        this.paginator = data.tasks.paginatorInfo
+
+        return data.tasks.data
+      }
+    },
   },
 };
 </script>
