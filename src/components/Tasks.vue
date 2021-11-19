@@ -13,7 +13,7 @@
       </li>
     </ul>
 
-    <div>
+    <div v-if="paginator">
       <div>Page: {{ paginator.currentPage }} / {{ paginator.lastPage }}</div>
       <div>
         Displaying {{ paginator.count }} entries out of {{ paginator.total }}
@@ -33,6 +33,9 @@
     <div v-show="open_form">
       <input type="text" v-model="title" />
       <button @click="save_task">Save</button>
+    </div>
+    <div v-show="errors" style="color: red">
+      {{ errors }}
     </div>
   </div>
 </template>
@@ -54,11 +57,13 @@ export default {
       open_edit_form: false,
       page: 1,
       perPage: 10,
-      paginator: null
+      paginator: null,
+      errors: ''
     };
   },
   methods: {
     save_task() {
+      this.errors = ''
       this.$apollo.mutate({
         mutation: CREATE_TASK_MUTATION,
         variables: {
@@ -69,7 +74,11 @@ export default {
         this.open_form = false
         this.$apollo.queries.tasks.refetch()
       }).catch((error) => {
-        console.log(error);
+        error.graphQLErrors.forEach(({extensions}) => {
+          if (extensions.category === 'validation') {
+            this.errors = extensions.validation.title[0];
+          }
+        });
       });
     },
     delete_task(id) {
