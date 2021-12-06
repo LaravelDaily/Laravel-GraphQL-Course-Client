@@ -2,40 +2,44 @@
     <form @submit.prevent="submitLogin">
       Email
       <br/>
-      <input v-model="email" type="email"/>
+      <input v-model="authDetails.email" type="email"/>
       <br/><br/>
       Password
       <br/>
-      <input v-model="password" type="password"/>
+      <input v-model="authDetails.password" type="password"/>
       <br/><br/>
       <button type="submit">Log In</button>
+      <div v-show="error" style="color: red">Invalid credentials.</div>
     </form>
 </template>
 
 <script>
-import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
   name: "Login",
   data() {
     return {
-      email: "",
-      password: "",
+      authDetails: {
+        email: "",
+        password: "",
+      },
+      error: false,
     };
   },
   methods: {
+    ...mapActions("Auth", ["login"]),
     submitLogin() {
-      axios
-          .post(process.env.VUE_APP_SERVER_HTTP + "/api/sanctum/token", {
-            email: this.email,
-            password: this.password,
-            device_name: navigator.userAgent,
-          })
-          .then(async (response) => {
-            console.log("Token: " + response.data);
+      this.error = false;
+      this.login(this.authDetails)
+          .then(() => {
+            this.$router.push("/");
             this.$router.push("/");
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            this.error = true;
+            console.log(error)
+          });
     },
   },
 }

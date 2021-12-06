@@ -6,7 +6,7 @@ import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/gra
 Vue.use(VueApollo)
 
 // Name of the localStorage item
-const AUTH_TOKEN = 'apollo-token'
+export const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
 const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
@@ -47,14 +47,15 @@ const defaultOptions = {
 }
 
 // Call this in the Vue app file
-export function createProvider (options = {}) {
-  // Create apollo client
-  const { apolloClient, wsClient } = createApolloClient({
-    ...defaultOptions,
-    ...options,
-  })
-  apolloClient.wsClient = wsClient
+// Create apollo client
+const options = {};
+export const { apolloClient, wsClient } = createApolloClient({
+  ...defaultOptions,
+  ...options,
+});
+apolloClient.wsClient = wsClient;
 
+export function createProvider () {
   // Create vue apollo provider
   const apolloProvider = new VueApollo({
     defaultClient: apolloClient,
